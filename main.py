@@ -7,7 +7,9 @@ def player_move(symbol):
     while True:
         player_row = int(input("Select a row: ")) - 1
         player_col = int(input("Select a column: ")) - 1
-        if game_board[player_row][player_col] == " ":
+        if player_row > 2 or player_col > 2:
+            print("Wrong field, choose the correct one.")
+        elif game_board[player_row][player_col] == " ":
             game_board[player_row][player_col] = symbol
             break
         else:
@@ -37,6 +39,13 @@ def check_win(board):
         return True
     return None
 
+def check_draw(board):
+    draw = all(cell != " " for row in board for cell in row)
+    if draw:
+        return True
+    else:
+        return False
+
 
 while True:
     player_symbol = "X"
@@ -47,7 +56,10 @@ while True:
         print("You win!")
         break
 
-
+    draw = check_draw(game_board)
+    if draw:
+        print("Draw!")
+        break
 
     player_symbol = "O"
     player_move(player_symbol)
@@ -56,5 +68,6 @@ while True:
     if winner:
         print("You win!")
         break
+
 
 
