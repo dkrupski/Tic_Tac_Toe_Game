@@ -1,28 +1,31 @@
 import random
 
-game_board = [[" " for _ in range(3)] for _ in range(3)]
-
-
-def player_move(symbol):
-    while True:
-        player_row = int(input("Select a row: ")) - 1
-        player_col = int(input("Select a column: ")) - 1
-        if player_row > 2 or player_col > 2:
-            print("Wrong field, choose the correct one.")
-        elif game_board[player_row][player_col] == " ":
-            game_board[player_row][player_col] = symbol
-            break
-        else:
-            print("Field occupied, select another one.")
-
-
-def print_game_board():
+def print_game_board(board):
     x = 0
-    for row in game_board:
+    for row in board:
         x += 1
         print(" | ".join(row))
         if x <= 2:
             print("-" * 9)
+
+def player_move(symbol, board):
+    while True:
+        row, col = input("Select a row and a column: ").split()
+        row = int(row) - 1
+        col = int(col) - 1
+        if row > 2 or col > 2:
+            print("Wrong field, choose the correct one.")
+        elif board[row][col] == " ":
+            board[row][col] = symbol
+            break
+        else:
+            print("Field occupied, select another one.")
+
+def computer_move(board, symbol):
+    empty_field = [(i, j) for i in range(3) for j in range(3) if board[i][j] == " "]
+    row, col = random.choice(empty_field)
+    board[row][col] = symbol
+
 
 def check_win(board):
     for row in board:
@@ -40,34 +43,43 @@ def check_win(board):
     return None
 
 def check_draw(board):
-    draw = all(cell != " " for row in board for cell in row)
-    if draw:
+    is_draw = all(cell != " " for row in board for cell in row)
+    if is_draw:
         return True
     else:
         return False
 
-
-while True:
+def game():
+    print("Welcome to the game of tic-tac-toe!")
+    mode = input("Select the game mode 1 - two people, 2 - with the computer")
+    game_board = [[" " for _ in range(3)] for _ in range(3)]
     player_symbol = "X"
-    player_move(player_symbol)
-    print_game_board()
-    winner = check_win(game_board)
-    if winner:
-        print("You win!")
-        break
 
-    draw = check_draw(game_board)
-    if draw:
-        print("Draw!")
-        break
+    while True:
+        print_game_board(game_board)
+        if mode == "1" or (mode == "2" and player_symbol == "X"):
+            player_move(player_symbol, game_board)
+        else:
+            computer_move(game_board, player_symbol)
 
-    player_symbol = "O"
-    player_move(player_symbol)
-    print_game_board()
-    winner = check_win(game_board)
-    if winner:
-        print("You win!")
-        break
+        winner = check_win(game_board)
+        if winner:
+            print(f"You win! {player_symbol}")
+            print_game_board(game_board)
+            break
+
+        draw = check_draw(game_board)
+        if draw:
+            print("Draw!")
+            print_game_board(game_board)
+            break
+
+        print("\n")
+        player_symbol = "O" if player_symbol == "X" else "X"
 
 
 
+
+
+if __name__ == "__main__":
+    game()
